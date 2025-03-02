@@ -6,6 +6,6 @@
 
 - Check Docker Compose Version - `docker-compose --version`
 
-
+- To run the created docker-compose file - `docker-compose up -d`
 
 
