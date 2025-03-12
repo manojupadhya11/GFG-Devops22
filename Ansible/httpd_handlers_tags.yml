@@ -1,33 +1,46 @@
 - hosts: all
   become: true
   tasks:
-    - name: "Installl httpd package"
+    - name: "Install httpd package"
+      package:
+        name: "httpd"
+        state: present
+      tags:
+        - install
+        - webserver
+
+    - name: "Uninstall httpd package"
       package:
         name: "httpd"
         state: absent
       tags:
-      - uninstall
+        - uninstall
 
-    - name: "copy webpages"
+    - name: "Copy webpages"
       copy:
-        src: /index.html
+        src: /home/ec2-user/index.html
         dest: /var/www/html
         owner: root
         group: root
       tags:
-      - copy
+        - deploy
+        - webserver
 
-    - copy:
-        src: httpd.conf
-        dest: /etc/httpd/conf/
+    - name: "Copy httpd configuration"
+      copy:
+        src: /home/ec2-user/httpd.conf
+        dest: /etc/httpd/conf
       notify:
         - restart server
       tags:
-      - copy
+        - config
+        - webserver
 
   handlers:
-      - name: "restart server"
-        service:
-          name: httpd
-          state: restarted
-          enabled: yes
+    - name: "Restart server"
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes
+      tags:
+        - restart
